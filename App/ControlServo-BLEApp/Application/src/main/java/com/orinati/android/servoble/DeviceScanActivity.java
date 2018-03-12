@@ -50,6 +50,8 @@ public class DeviceScanActivity extends Activity {
     private Toast                       mToast;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 456;
     private boolean permissionChecked = false;
+    private boolean scanStarted       = false;
+    private boolean board_found        = false;
 
     private static final int REQUEST_ENABLE_BT = 1;
     // Stops scanning after 10 seconds.
@@ -112,6 +114,7 @@ public class DeviceScanActivity extends Activity {
 
             // Start button - connect to board application and send data
             mStartButton = mView.findViewById(R.id.button_start);
+
             if (boardFound()) { // If can connect to board
                 if (mToast != null) {
                     mToast.cancel();
@@ -122,8 +125,10 @@ public class DeviceScanActivity extends Activity {
                 mStartButton.setVisibility(View.VISIBLE);
             }
             else { // Couldn't connect to board
-                mToast = Toast.makeText(this, R.string.dev_not_found, Toast.LENGTH_SHORT);
-                mToast.show();
+                if (scanStarted) {
+                    mToast = Toast.makeText(this, R.string.dev_not_found, Toast.LENGTH_SHORT);
+                    mToast.show();
+                }
                 mStartButton.setVisibility(View.INVISIBLE);
                 mStartButton.setClickable(false);
             }
@@ -134,16 +139,18 @@ public class DeviceScanActivity extends Activity {
             menu.findItem(R.id.menu_stop).setVisible(true);
             menu.findItem(R.id.menu_scan).setVisible(false);
         }
-
         return true;
     }
 
     private boolean boardFound() {
         String devName;
+        if(board_found)
+            return true;
         for (BluetoothDevice dev : mLeDevices) { // Check if the board is one the found devices
             devName = dev.getName();
             if (devName != null && devName.equals(Constants.TI_CC1350_APP)) {
                 mBoardDevice = dev;
+                board_found = true;
                 return true;
             }
         }
@@ -206,7 +213,10 @@ public class DeviceScanActivity extends Activity {
     }
 
     private void scanLeDevice(final boolean enable) {
+        scanStarted       = false;
+        board_found        = false;
         if (enable) {
+            scanStarted = true;
             // Stops scanning after a pre-defined scan period.
             mHandler.postDelayed(new Runnable() {
                 @Override

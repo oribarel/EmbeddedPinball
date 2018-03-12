@@ -30,7 +30,6 @@
     <string name="dev_not_found">
         Device not found, please check if device is on and scan again
     </string>
-    <string name="tilt_device">Tilt your device</string>
 
     <!-- Menu items -->
     <string name="menu_scan">Scan</string>

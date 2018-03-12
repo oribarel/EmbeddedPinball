@@ -49,19 +49,21 @@ public class DeviceControlActivity extends Activity {
 
     public static final String EXTRAS_DEVICE_NAME       = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS    = "DEVICE_ADDRESS";
+    public static final String GAME_OVER    = "GAME OVER";
 
     private TextView                    mConnectionState;
     private TextView                    mDataField;
-    private TextView                    mTiltDevice;
+    private TextView                    mLivesText;
+    private TextView                    mLivesLeft;
     private String                      mDeviceName;
     private String                      mDeviceAddress;
     private BluetoothLeService          mBluetoothLeService;
     private BluetoothGattCharacteristic mWriteCharacteristic;
+    private BluetoothGattCharacteristic mNotifyCharacteristic;
     private Button                      mPauseButton;
     private Button                      mLeftPaddleButton;
     private Button                      mRightPaddleButton;
-    private PaddleManager               mPaddleManager;
-    //private RotationVectorSensor        mRotationVectorSensor;
+    //private PaddleManager               mPaddleManager;
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -95,17 +97,19 @@ public class DeviceControlActivity extends Activity {
             final String action = intent.getAction();
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
                 updateConnectionState(R.string.connected);
-                mTiltDevice.setVisibility(View.VISIBLE);
+                mLivesText.setVisibility(View.VISIBLE);
+                mLivesLeft.setVisibility(View.VISIBLE);
                 mLeftPaddleButton.setClickable(true);
                 invalidateOptionsMenu();
             }
             else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 updateConnectionState(R.string.disconnected);
-                mTiltDevice.setVisibility(View.INVISIBLE);
+                mLivesText.setVisibility(View.INVISIBLE);
+                mLivesLeft.setVisibility(View.INVISIBLE);
                 invalidateOptionsMenu();
             }
             else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                // Find the write characteristic of the board's GATT service
+                // Find the write and notification characteristic of the board's GATT service
                 initializeCharacteristic(mBluetoothLeService.getSupportedGattServices());
             }
             else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
@@ -118,12 +122,17 @@ public class DeviceControlActivity extends Activity {
         if (supportedGattServices != null) {
             String service_uuid = null;
             String wr_uuid      = Constants.BOARD_WR;
+            String notify_uuid  = Constants.BOARD_NOTIFY;
             // Finds the appropriate service
             for (BluetoothGattService gattService : supportedGattServices) {
                 service_uuid = gattService.getUuid().toString();
                 if (service_uuid.equals(Constants.BOARD_SERVICES)) {
                     // Retrieves the write characteristic
                     mWriteCharacteristic = gattService.getCharacteristic(UUID.fromString(wr_uuid));
+                    // Retrives the notification characteristic
+                    mNotifyCharacteristic = gattService.getCharacteristic((UUID.fromString(notify_uuid)));
+                    // Enable the notification characteristic
+                    mBluetoothLeService.enablePeerDeviceNotifyMe(true,mNotifyCharacteristic);
                     break;
                 }
             }
@@ -149,14 +158,13 @@ public class DeviceControlActivity extends Activity {
         mLeftPaddleButton.setOnClickListener(new PaddleClickListener(true));
         mLeftPaddleButton.setOnLongClickListener(new PaddleLongClickListener(true));
         mLeftPaddleButton.setOnTouchListener(new PaddleTouchListener(true));
-        mTiltDevice         = findViewById(R.id.tilt);
+        mLivesText          = findViewById(R.id.text_lives);
+        mLivesLeft          = findViewById(R.id.text_lives_number);
 
         getActionBar().setTitle(mDeviceName);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-        //mRotationVectorSensor = new RotationVectorSensor(
-        //        (SensorManager) getSystemService(Activity.SENSOR_SERVICE));
     }
 
     @Override
@@ -193,6 +201,12 @@ public class DeviceControlActivity extends Activity {
     private void displayData(String data) {
         if (data != null) {
             mDataField.setText(data);
+            // Update number of lives left (based on the notification sent)
+            if (Integer.parseInt(data) <= 0)
+                mLivesLeft.setText(GAME_OVER);
+            else
+                mLivesLeft.setText(data);
+
         }
     }
 
@@ -209,7 +223,7 @@ public class DeviceControlActivity extends Activity {
     private class PauseClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            mPaddleManager.unregisterListener();
+            //mPaddleManager.unregisterListener();
             mBluetoothLeService.disconnect();
             DeviceControlActivity.this.finish();
             onBackPressed();
@@ -227,15 +241,6 @@ public class DeviceControlActivity extends Activity {
         @Override
         public void onClick(View v)
         {
-            /*try
-            {
-                TimeUnit.SECONDS.sleep(1);
-            }
-            catch(InterruptedException ex)
-            {
-                Thread.currentThread().interrupt();
-            }*/
-
             // sleep for 0.05 sec
             try
             {

@@ -16,7 +16,7 @@
 -->
 
 <resources>
-    <string name="app_name">Control Servo Over BLE</string>
+    <string name="app_name">Pinball Bluetooth Controller</string>
     <string name="intro_message">
         <![CDATA[
 

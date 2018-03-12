@@ -95,6 +95,56 @@
 #include <driverlib/ioc.h>
 #endif // USE_FPGA | DEBUG_SW_TRACE
 
+/* NEW */
+#include <ti/drivers/PIN.h>
+#include <ti/drivers/pin/PINCC26XX.h>
+#include <ti/sysbios/BIOS.h>
+#include <ti/sysbios/knl/Task.h>
+#include <ti/sysbios/knl/Semaphore.h>
+#define NUMBER_OF_INITIAL_LIVES 3
+
+static PIN_Handle ledPinHandle;
+static PIN_Handle buttonPinHandle;
+static PIN_State buttonPinState;
+static uint8_t number_of_lives_left = NUMBER_OF_INITIAL_LIVES;
+static int notify = 0;
+PIN_Config buttonPinTable[] = {
+    Board_PIN_BUTTON0  | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_NEGEDGE,
+    Board_PIN_BUTTON1  | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_NEGEDGE,
+    PIN_TERMINATE
+};
+/* NEW */
+/*
+ *  ======== buttonCallbackFxn ========
+ *  Pin interrupt Callback function board buttons configured in the pinTable.
+ *  If Board_PIN_LED3 and Board_PIN_LED4 are defined, then we'll add them to the PIN
+ *  callback function.
+ */
+void buttonCallbackFxn(PIN_Handle handle, PIN_Id pinId) {
+    /* Debounce logic, only toggle if the button is still pushed (low) */
+    CPUdelay(8000*50);
+    if (!PIN_getInputValue(pinId)) {
+        switch (pinId) {
+            case Board_PIN_BUTTON0:
+            case Board_PIN_BUTTON1:
+                notify = 1;
+                //uint32_t currVal =  PIN_getOutputValue(Board_PIN_LED1);
+                //PIN_setOutputValue(ledPinHandle, Board_PIN_LED1, !currVal);
+                //originally commented. SimpleProfile_SetParameter( SIMPLEPROFILE_CHAR2, sizeof(uint8_t), &value);
+                //originally commented. SimpleProfile_SetParameter( SIMPLEPROFILE_CHAR4, sizeof(uint8_t), &value );
+                break;
+            default:
+                break;
+        }
+    }
+
+
+}
+
+
+/* DONE */
+
+
 /*********************************************************************
  * CONSTANTS
  */
@@ -139,7 +189,7 @@
 #define DEFAULT_CONN_PAUSE_PERIPHERAL         6
 
 // How often to perform periodic event (in msec)
-#define SBP_PERIODIC_EVT_PERIOD               100 // original 5000
+#define SBP_PERIODIC_EVT_PERIOD               200 // original 5000
 
 // Type of Display to open
 #if !defined(Display_DISABLE_ALL)
@@ -602,6 +652,28 @@ static void SimpleBLEPeripheral_taskFxn(UArg a0, UArg a1)
 {
   // Initialize application
   SimpleBLEPeripheral_init();
+  /* NEW */
+  //register push button handlers
+    /* Shut down external flash on LaunchPads. It is powered on by default
+         * but can be shut down through SPI
+         */
+    #ifdef Board_shutDownExtFlash
+        Board_shutDownExtFlash();
+    #endif
+    buttonPinHandle = PIN_open(&buttonPinState, buttonPinTable);
+    if(!buttonPinHandle) {
+        /* Error initializing button pins */
+        while(1);
+    }
+    /* Setup callback for button pins */
+    if (PIN_registerIntCb(buttonPinHandle, &buttonCallbackFxn) != 0) {
+        /* Error registering button callback function */
+        while(1);
+    }
+
+    //ledPinHandle = PIN_open(&ledPinState, ledPinTable); //open LED only once
+
+    /* DONE */
 
   // Application main loop
   for (;;)
@@ -1144,6 +1216,12 @@ static void SimpleBLEPeripheral_performPeriodicTask(void)
 {
 #ifndef FEATURE_OAD_ONCHIP
   uint8_t valueToCopy;
+  if (notify)
+  {
+      valueToCopy = --number_of_lives_left;
+      SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR4, sizeof(uint8_t), &valueToCopy);
+      notify = 0;
+  }
 
   // Call to retrieve the value of the third characteristic in the profile
   if (SimpleProfile_GetParameter(SIMPLEPROFILE_CHAR3, &valueToCopy) == SUCCESS)
@@ -1152,8 +1230,8 @@ static void SimpleBLEPeripheral_performPeriodicTask(void)
     // Note that if notifications of the fourth characteristic have been
     // enabled by a GATT client device, then a notification will be sent
     // every time this function is called.
-    SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR4, sizeof(uint8_t),
-                               &valueToCopy);
+    //SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR4, sizeof(uint8_t),
+    //                           &valueToCopy);
   }
 #endif //!FEATURE_OAD_ONCHIP
 }

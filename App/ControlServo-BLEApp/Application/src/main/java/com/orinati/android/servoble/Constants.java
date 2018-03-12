@@ -23,4 +23,5 @@ public class Constants {
     public static final String TI_CC1350_APP    = "SimpleBLEPeripheral"; //TODO: check if connects
     public static String BOARD_SERVICES         = "0000fff0-0000-1000-8000-00805f9b34fb";
     public static String BOARD_WR               = "0000fff3-0000-1000-8000-00805f9b34fb";
+    public static String BOARD_NOTIFY           = "0000fff4-0000-1000-8000-00805f9b34fb";
 }

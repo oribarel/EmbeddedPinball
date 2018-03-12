@@ -27,8 +27,6 @@ public class PaddleManager {
             return;
         }
         paused = true;
-        // Unregister listener
-        //mSensorManager.unregisterListener(mRotationListener, mRotationSensor);
     }
 
     private void writePaddleState(Boolean isLeft,Boolean isUp) {
