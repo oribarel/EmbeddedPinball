@@ -26,13 +26,15 @@
         <TextView android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/label_device_address"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:visibility="invisible"/>
         <Space android:layout_width="5dp"
             android:layout_height="wrap_content"/>
         <TextView android:id="@+id/device_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:visibility="invisible"/>/>
     </LinearLayout>
     <LinearLayout android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -57,14 +59,16 @@
         <TextView android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/label_data"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+        android:visibility="invisible"/>
         <Space android:layout_width="5dp"
             android:layout_height="wrap_content"/>
         <TextView android:id="@+id/data_value"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/no_data"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:visibility="invisible"/>
     </LinearLayout>
 
     <Button
@@ -75,13 +79,14 @@
         android:layout_marginBottom="@dimen/margin_huge"
         android:layout_marginTop="@dimen/margin_medium"
         android:layout_weight="0.5"
-        android:background="@android:color/holo_red_light"
+        android:background="@android:color/holo_blue_light"
         android:clickable="true"
         android:foregroundGravity="center"
         android:text="@string/button_pause"
         android:textColor="#000000"
-        android:textSize="32dp"
+        android:textSize="50dp"
         android:visibility="visible" />
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -94,8 +99,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Lives: "
-            android:textSize="18sp"
-            android:visibility="invisible"/>
+            android:textSize="18sp"/>
 
 
         <Space
@@ -109,10 +113,20 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="3"
-            android:textSize="18sp"
-            android:visibility="invisible"/>
+            android:textSize="18sp"/>
 
     </LinearLayout>
+
+    <TextView
+        android:text="00:00:00"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:textSize="50dp"
+        android:textStyle="bold"
+        android:textColor="#009688"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
 
     <LinearLayout

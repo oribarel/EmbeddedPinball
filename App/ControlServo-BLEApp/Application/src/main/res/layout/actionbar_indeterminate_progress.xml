@@ -34,12 +34,12 @@
         android:layout_marginBottom="@dimen/margin_medium"
         android:layout_marginTop="@dimen/margin_huge"
         android:layout_weight="0.5"
-        android:background="@android:color/holo_blue_light"
+        android:background="@android:color/holo_green_light"
         android:clickable="true"
         android:foregroundGravity="center"
         android:text="@string/button_start"
         android:textColor="#000000"
-        android:textSize="32dp"
+        android:textSize="100dp"
         android:visibility="visible" />
 
     <!--<Button-->

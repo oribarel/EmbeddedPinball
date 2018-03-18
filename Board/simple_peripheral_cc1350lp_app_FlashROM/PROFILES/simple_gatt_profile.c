@@ -688,7 +688,7 @@ static bStatus_t simpleProfile_ReadAttrCB(uint16_t connHandle,
 /*Move these definitions elsewhere*/
 #define LPADDLE_UP  0x1B
 #define RPADDLE_UP  0x2B
-#define LPADDLE_DOWN  0x30
+#define LPADDLE_DOWN  0x1A
 #define RPADDLE_DOWN  0x2A
 
 /*********************************************************************

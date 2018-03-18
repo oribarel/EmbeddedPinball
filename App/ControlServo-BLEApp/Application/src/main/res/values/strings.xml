@@ -17,7 +17,7 @@
     <string name="ble_not_supported">BLE is not supported</string>
     <string name="label_data">Data:</string>
     <string name="label_device_address">Device address:</string>
-    <string name="label_state">State:</string>
+    <string name="label_state">Status:</string>
     <string name="no_data">No data</string>
     <string name="connected">Connected</string>
     <string name="disconnected">Disconnected</string>
@@ -25,8 +25,8 @@
     <string name="error_bluetooth_not_supported">Bluetooth not supported.</string>
 
     <string name="device_scan">Scanning for devices...</string>
-    <string name="button_start">Start</string>
-    <string name="button_pause">Pause</string>
+    <string name="button_start">New Game</string>
+    <string name="button_pause">Start New Game</string>
     <string name="dev_not_found">
         Device not found, please check if device is on and scan again
     </string>

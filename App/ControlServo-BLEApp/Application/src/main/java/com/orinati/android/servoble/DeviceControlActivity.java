@@ -27,13 +27,19 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -55,6 +61,7 @@ public class DeviceControlActivity extends Activity {
     private TextView                    mDataField;
     private TextView                    mLivesText;
     private TextView                    mLivesLeft;
+    private Integer                     livesLeft = 3;
     private String                      mDeviceName;
     private String                      mDeviceAddress;
     private BluetoothLeService          mBluetoothLeService;
@@ -63,6 +70,21 @@ public class DeviceControlActivity extends Activity {
     private Button                      mPauseButton;
     private Button                      mLeftPaddleButton;
     private Button                      mRightPaddleButton;
+    TextView textView ;
+
+    long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L ;
+
+    Handler handler;
+
+    int Seconds, Minutes, MilliSeconds ;
+
+    ListView listView ;
+
+    String[] ListElements = new String[] {  };
+
+    List<String> ListElementsArrayList ;
+
+    ArrayAdapter<String> adapter ;
     //private PaddleManager               mPaddleManager;
 
     // Code to manage Service lifecycle.
@@ -84,6 +106,32 @@ public class DeviceControlActivity extends Activity {
             mBluetoothLeService = null;
         }
     };
+
+    public Runnable runnable = new Runnable() {
+
+        public void run() {
+
+            MillisecondTime = SystemClock.uptimeMillis() - StartTime;
+
+            UpdateTime = TimeBuff + MillisecondTime;
+
+            Seconds = (int) (UpdateTime / 1000);
+
+            Minutes = Seconds / 60;
+
+            Seconds = Seconds % 60;
+
+            MilliSeconds = (int) (UpdateTime % 1000);
+
+            textView.setText("" + Minutes + ":"
+                    + String.format("%02d", Seconds) + ":"
+                    + String.format("%03d", MilliSeconds));
+
+            handler.postDelayed(this, 0);
+        }
+
+    };
+
 
     // Handles various events fired by the Service.
     // ACTION_GATT_CONNECTED: connected to a GATT server.
@@ -164,11 +212,24 @@ public class DeviceControlActivity extends Activity {
         mRightPaddleButton.setOnTouchListener(new PaddleTouchListener(false));
         mLivesText          = findViewById(R.id.text_lives);
         mLivesLeft          = findViewById(R.id.text_lives_number);
+        textView = (TextView)findViewById(R.id.textView);
 
         getActionBar().setTitle(mDeviceName);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+
+        handler = new Handler() ;
+
+        ListElementsArrayList = new ArrayList<String>(Arrays.asList(ListElements));
+
+        adapter = new ArrayAdapter<String>(DeviceControlActivity.this,
+                android.R.layout.simple_list_item_1,
+                ListElementsArrayList
+        );
+
+        //listView.setAdapter(adapter);
+
     }
 
     @Override
@@ -206,10 +267,12 @@ public class DeviceControlActivity extends Activity {
         if (data != null) {
             mDataField.setText(data);
             // Update number of lives left (based on the notification sent)
-            if (Integer.parseInt(data) <= 0)
+            if (--livesLeft <= 0) {
                 mLivesLeft.setText(GAME_OVER);
+                handler.removeCallbacks(runnable);
+            }
             else
-                mLivesLeft.setText(data);
+                mLivesLeft.setText(Integer.toString(livesLeft));
 
         }
     }
@@ -227,10 +290,34 @@ public class DeviceControlActivity extends Activity {
     private class PauseClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            //Reset lives
+            livesLeft = 3;
+            mLivesLeft.setText("3");
+
+            //Zero timer
+            MillisecondTime = 0L ;
+            StartTime = 0L ;
+            TimeBuff = 0L ;
+            UpdateTime = 0L ;
+            Seconds = 0 ;
+            Minutes = 0 ;
+            MilliSeconds = 0 ;
+
+            textView.setText("00:00:00");
+
+            ListElementsArrayList.clear();
+
+            adapter.notifyDataSetChanged();
+
+            //Start timer
+
+            StartTime = SystemClock.uptimeMillis();
+            boolean b = handler.postDelayed(runnable, 0);
+
             //mPaddleManager.unregisterListener();
-            mBluetoothLeService.disconnect();
-            DeviceControlActivity.this.finish();
-            onBackPressed();
+            //mBluetoothLeService.disconnect();
+            //DeviceControlActivity.this.finish();
+            //onBackPressed();
         }
     }
 
