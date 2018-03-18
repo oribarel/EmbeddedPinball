@@ -63,6 +63,9 @@
 #include <ti/drivers/GPIO.h>
 #include "Board.h"
 
+/* Driver Header files */
+#include <ti/drivers/PWM.h>
+
 /*
  *  ======== pinInterrupt.c ========
  */
@@ -75,13 +78,21 @@
 #include <ti/drivers/pin/PINCC26XX.h>
 
 
-/* Pin driver handles */
-static PIN_Handle buttonPinHandle;
-static PIN_Handle ledPinHandle;
-
 /* Global memory storage for a PIN_Config table */
 static PIN_State buttonPinState;
 static PIN_State ledPinState;
+static uint16_t   duty = 1500;
+static PWM_Handle pwm1 = NULL;
+static PWM_Handle pwm2 = NULL;
+static PWM_Params params;
+
+/* Constants for servo */
+#define PADDLE_DOWN 1000
+#define PADDLE_UP   2000
+
+/* Pin driver handles */
+static PIN_Handle buttonPinHandle;
+static PIN_Handle ledPinHandle;
 
 /*
  * Initial LED pin configuration table
@@ -674,6 +685,12 @@ static bStatus_t simpleProfile_ReadAttrCB(uint16_t connHandle,
   return ( status );
 }
 
+/*Move these definitions elsewhere*/
+#define LPADDLE_UP  0x1B
+#define RPADDLE_UP  0x2B
+#define LPADDLE_DOWN  0x30
+#define RPADDLE_DOWN  0x2A
+
 /*********************************************************************
  * @fn      simpleProfile_WriteAttrCB
  *
@@ -696,19 +713,76 @@ static bStatus_t simpleProfile_WriteAttrCB(uint16_t connHandle,
   bStatus_t status = SUCCESS;
   uint8 notifyApp = 0xFF;
   
-
+  /*TODO: remove and init as PWM*/
   /* Open LED pins */
+if(!pwm1)
+{
+  /* Period and duty in microseconds */
+   uint16_t   pwmPeriod = 3000;
+   //uint16_t   dutyInc = 100;
+   /* Sleep time in microseconds */
+          //uint32_t   time = 50000;
+          //PWM_Handle pwm1 = NULL;
+          //PWM_Handle pwm2 = NULL;
+
+          /* Call driver init functions. */
+          PWM_init();
+
+          PWM_Params_init(&params);
+          params.dutyUnits = PWM_DUTY_US;
+          params.dutyValue = 0;
+          params.periodUnits = PWM_PERIOD_US;
+          params.periodValue = pwmPeriod;
+          pwm1 = PWM_open(Board_PWM0, &params);
+          if (pwm1 == NULL) {
+              /* Board_PWM0 did not open */
+              while (1);
+          }
+
+          PWM_start(pwm1);
+
+          if (Board_PWM1 != Board_PWM0) {
+              pwm2 = PWM_open(Board_PWM1, &params);
+
+              if (pwm2 == NULL) {
+                  /* Board_PWM0 did not open */
+                  while (1);
+              }
+
+              PWM_start(pwm2);
+          }
+}
+
+/*
   if(!ledPinHandle)
       ledPinHandle = PIN_open(&ledPinState, ledPinTable);
   if(!ledPinHandle) {
-      /* Error initializing board LED pins */
+      // Error initializing board LED pins
       while(1);
   }
-
+*/
   if (*pValue != '0')
       PIN_setOutputValue(ledPinHandle, Board_PIN_LED0, 1);
   else
       PIN_setOutputValue(ledPinHandle, Board_PIN_LED0, 0);
+
+
+  switch(*pValue){
+      case RPADDLE_UP:
+          PWM_setDuty(pwm2, PADDLE_UP);
+          break;
+      case LPADDLE_UP:
+          PWM_setDuty(pwm1, PADDLE_UP);
+          break;
+      case RPADDLE_DOWN:
+          PWM_setDuty(pwm2, PADDLE_DOWN);
+          break;
+      case LPADDLE_DOWN:
+          PWM_setDuty(pwm1, PADDLE_DOWN);
+          break;
+      default:
+          break;
+  }
 
 
   if ( pAttr->type.len == ATT_BT_UUID_SIZE )

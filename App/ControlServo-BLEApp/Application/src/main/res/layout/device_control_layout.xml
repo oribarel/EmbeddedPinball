@@ -114,13 +114,38 @@
 
     </LinearLayout>
 
-    <Button android:id="@+id/left_button"
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Space android:layout_width="50dp"
+            android:layout_height="wrap_content"/>
+        <Button android:id="@+id/left_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="false"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:text="Left"
-        android:visibility="visible" />
+        android:visibility="visible"
+            android:textSize="32dp"/>
+
+        <Space android:layout_width="107dp"
+            android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/right_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:clickable="false"
+        android:text="Right"
+        android:visibility="visible"
+        android:textSize="32dp"/>
+
+    </LinearLayout>
+
 
 </LinearLayout>

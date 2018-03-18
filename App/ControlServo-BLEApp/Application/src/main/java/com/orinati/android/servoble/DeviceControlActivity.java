@@ -158,6 +158,10 @@ public class DeviceControlActivity extends Activity {
         mLeftPaddleButton.setOnClickListener(new PaddleClickListener(true));
         mLeftPaddleButton.setOnLongClickListener(new PaddleLongClickListener(true));
         mLeftPaddleButton.setOnTouchListener(new PaddleTouchListener(true));
+        mRightPaddleButton   = findViewById(R.id.right_button);
+        mRightPaddleButton.setOnClickListener(new PaddleClickListener(false));
+        mRightPaddleButton.setOnLongClickListener(new PaddleLongClickListener(false));
+        mRightPaddleButton.setOnTouchListener(new PaddleTouchListener(false));
         mLivesText          = findViewById(R.id.text_lives);
         mLivesLeft          = findViewById(R.id.text_lives_number);
 
@@ -312,11 +316,11 @@ public class DeviceControlActivity extends Activity {
         if (isLeft && isUp)
             return new byte[]{0x1B};
         if (isLeft && !isUp)
-            return new byte[]{0x30};
+            return new byte[]{0x1A};
         if (!isLeft && isUp)
             return new byte[]{0x2B};
         if (!isLeft && !isUp)
-            return new byte[]{0x1A};
+            return new byte[]{0x2A};
         // Should not get here
         return new byte[]{0x00};
     }
