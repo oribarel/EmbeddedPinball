@@ -1,6 +1,6 @@
 # EmbeddedPinball
 
-A painball game based on a CC-1350 launchpad that is connected to 2 servos and a force sensor. The game is controled through a dedicated  android and TI-RTOS applications that commuicate over BLE. The Android app transmit the flippers' state to the board using the TI-RTOS application (the firmware that is installed on the CC-1350) and gets notifications from the TI-RTOS application with regard to the game state (e.g. number of lives left).
+A painball game based on a CC-1350 launchpad that is connected to 2 servos and a force sensor. The game is controlled through a dedicated  android and TI-RTOS applications that commuicate over BLE. The Android app transmit the flippers' state to the board using the TI-RTOS application (the firmware that is installed on the CC-1350) and gets notifications from the TI-RTOS application with regard to the game state (e.g. number of lives left).
 
 
 ## Building the Project
