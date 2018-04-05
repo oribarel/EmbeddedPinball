@@ -1,6 +1,6 @@
 # EmbeddedPinball
 
-Our project is a pinball game  based on a CC-1350 launchpad that is connected to 2 servos that function as flippers and a force sensor that is used to encounter that the ball fall into the drain. The game is controlled through a dedicated Android and TI-RTOS applications that communicate over BLE. The Android app transmit the flippers' state to the board using the TI-RTOS application and gets notifications from the TI-RTOS application with regard to the number of lives left.
+This is a pinball game  based on a CC-1350 launchpad that is connected to 2 servos that function as flippers and a force sensor that is used to encounter that the ball fall into the drain. The game is controlled through a dedicated Android and TI-RTOS applications that communicate over BLE. The Android app transmit the flippers' state to the board using the TI-RTOS application and gets notifications from the TI-RTOS application with regard to the number of lives left.
 
 
 ## Building the Project
