@@ -109,6 +109,7 @@ static PIN_State buttonPinState;
 static uint8_t number_of_lives_left = NUMBER_OF_INITIAL_LIVES;
 static int notify = 0;
 PIN_Config buttonPinTable[] = {
+    Board_DIO12  | PIN_INPUT_EN | PIN_PULLDOWN | PIN_IRQ_NEGEDGE,
     Board_PIN_BUTTON0  | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_NEGEDGE,
     Board_PIN_BUTTON1  | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_NEGEDGE,
     PIN_TERMINATE
@@ -125,6 +126,7 @@ void buttonCallbackFxn(PIN_Handle handle, PIN_Id pinId) {
     CPUdelay(8000*50);
     if (!PIN_getInputValue(pinId)) {
         switch (pinId) {
+            case Board_DIO12:
             case Board_PIN_BUTTON0:
             case Board_PIN_BUTTON1:
                 notify = 1;

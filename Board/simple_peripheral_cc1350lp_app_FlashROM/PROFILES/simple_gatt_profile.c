@@ -769,13 +769,13 @@ if(!pwm1)
 
   switch(*pValue){
       case RPADDLE_UP:
-          PWM_setDuty(pwm2, PADDLE_UP);
+          PWM_setDuty(pwm2, PADDLE_DOWN);
           break;
       case LPADDLE_UP:
           PWM_setDuty(pwm1, PADDLE_UP);
           break;
       case RPADDLE_DOWN:
-          PWM_setDuty(pwm2, PADDLE_DOWN);
+          PWM_setDuty(pwm2, PADDLE_UP);
           break;
       case LPADDLE_DOWN:
           PWM_setDuty(pwm1, PADDLE_DOWN);
