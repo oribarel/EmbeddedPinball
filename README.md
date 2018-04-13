@@ -6,7 +6,7 @@ This is a pinball game  based on a CC-1350 launchpad that is connected to 2 serv
 ## Building the Project
 ### Pre-requisites:
 - Java 8 (or above).
--[Android Studio](https://developer.android.com/studio/index.html)
+- [Android Studio](https://developer.android.com/studio/index.html)
 - Android SDK 27.
 - Android Build tools v27.0.2.
 - [Code Composer Studio](http://processors.wiki.ti.com/index.php/Compiler_Releases).
