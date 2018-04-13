@@ -6,16 +6,17 @@ This is a pinball game  based on a CC-1350 launchpad that is connected to 2 serv
 ## Building the Project
 ### Pre-requisites:
 - Java 8 (or above).
+-[Android Studio](https://developer.android.com/studio/index.html)
 - Android SDK 27.
 - Android Build tools v27.0.2.
-- TI's [CCS compiler](http://processors.wiki.ti.com/index.php/Compiler_Releases).
+- [Code Composer Studio](http://processors.wiki.ti.com/index.php/Compiler_Releases).
+
 
 ### Recommended build steps:
-1. Download the latest [Android Studio](https://developer.android.com/studio/index.html) and [Code Composer Studio](http://processors.wiki.ti.com/index.php/Download_CCS).
-2. Clone the project from our repository
-3. Connect your Android device to the computer and [enable the developer'sdebug mode](https://www.howtogeek.com/129728/how-to-access-the-developer-options-menu-and-enable-usb-debugging-on-android-4.2/) in your Android device.
-4. Download the app to your android device by running the application in Android studio.
-5. Open the board apps simple_peripheral_cc1350lp_stack_FlashROM and simple_peripheral_cc1350lp_app_FlashROM projects in Code Composer Studio.
-6. Connect the TI CC-1350 to your computer using the dedicated cable.
-7. Run simple_peripheral_cc1350lp_stack_FlashROM (this step should be done only once).
-8. Run simple_peripheral_cc1350lp_app_FlashROM and start controlling the launchpad using the Android app.
+1. Clone the project from our repository
+2. Connect your Android device to the computer and [enable the developer'sdebug mode](https://www.howtogeek.com/129728/how-to-access-the-developer-options-menu-and-enable-usb-debugging-on-android-4.2/) in your Android device.
+3. Download the app to your android device by running the application in Android studio.
+4. Open the board apps simple_peripheral_cc1350lp_stack_FlashROM and simple_peripheral_cc1350lp_app_FlashROM projects in Code Composer Studio.
+5. Connect the TI CC-1350 to your computer using the dedicated cable.
+6. Run simple_peripheral_cc1350lp_stack_FlashROM (this step should be done only once).
+7. Run simple_peripheral_cc1350lp_app_FlashROM and start controlling the launchpad using the Android app.
